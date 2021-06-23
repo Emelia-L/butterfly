@@ -127,30 +127,28 @@ const hide = (tipsDom, callback) => {
   callback && callback(tipsDom);
 };
 
+
+let currentTips = null;
+let _mouseIn = (e) => {
+  isMouseInTips = true;
+}
+let _mouseOut = (e) => {
+  isMouseInTips = false;
+  _hide();
+}
 let createTip = (opts, callback) => {
-  let currentTips = null;
   let tipstDom = null;
   let isMouseInTips = false;
   let isMouseInTarget = false;
   let timer = null;
   let notEventThrough = !!opts.notEventThrough;
-  let _mouseIn = (e) => {
-    isMouseInTips = true;
-  }
-  let _mouseOut = (e) => {
-    isMouseInTips = false;
-    _hide();
-  }
   let _hide = () => {
     if (timer) {
       clearTimeout(timer);
     }
     timer = setTimeout(() => {
       if (!isMouseInTips && !isMouseInTarget && currentTips) {
-        hide(currentTips);
-        currentTips.removeEventListener('mouseover', _mouseIn);
-        currentTips.removeEventListener('mousemove', _mouseIn);
-        currentTips.removeEventListener('mouseout', _mouseOut);
+        closeTip();
       }
     }, 50);
   }
@@ -184,6 +182,13 @@ let createTip = (opts, callback) => {
   });
 
 };
+
+let closeTip = (callback) => {
+  hide(currentTips);
+  currentTips.removeEventListener('mouseover', _mouseIn);
+  currentTips.removeEventListener('mousemove', _mouseIn);
+  currentTips.removeEventListener('mouseout', _mouseOut);
+}
 
 let currentMenu = null;
 let currentDragDom = null;
@@ -278,6 +283,7 @@ let _dragEnd = (e) => {
 
 export default {
   createTip,
+  closeTip,
   createMenu,
   closeMenu
 };
